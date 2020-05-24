@@ -4,14 +4,16 @@
 #include <QDateTime>
 #include <QJsonDocument>
 #include <QtMath>
+#include <QValidator>
+#include <limits>
+
+using namespace std;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    // 限制输入为float
-//    ui->lineEdit_flloat->setValidator();
     m_timer = new QTimer(this);
     connect(m_timer, SIGNAL(timeout()), this, SLOT(onTimerUpdate()));
     m_timer->start(1000);
@@ -46,6 +48,24 @@ void MainWindow::initMainWindow()
     ui->label_dynamicTime->adjustSize();
     onDecNumToOtherNum();
     onNumToASCIICode();
+    // 限制lineEdit输入
+    {
+        // 限制lineEdit_float输入为double，只显示12为小数
+        {
+            double maxDouble = numeric_limits<double>::max();
+            double minDouble = numeric_limits<double>::max();
+            MY_DEBUG << maxDouble << minDouble;
+            QDoubleValidator *doubleValidator = new QDoubleValidator (minDouble, maxDouble, 12, this);
+            ui->lineEdit_float->setValidator(doubleValidator);
+        }
+        {
+            long maxLong = numeric_limits<long>::max();
+            long minLong = numeric_limits<long>::min();
+            MY_DEBUG << minLong << maxLong;
+            QIntValidator *intValidator = new QIntValidator (minLong, maxLong, this);
+            ui->lineEdit_DecNum->setValidator(intValidator);
+        }
+    }
 }
 
 void MainWindow::stringToOtherString(const QString &inputStr, const int &inputTypeInt,
