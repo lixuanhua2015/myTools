@@ -65,6 +65,9 @@ void MainWindow::initMainWindow()
             QIntValidator *intValidator = new QIntValidator (minLong, maxLong, this);
             ui->lineEdit_DecNum->setValidator(intValidator);
         }
+        {
+
+        }
     }
 }
 
